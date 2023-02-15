@@ -2,6 +2,9 @@
 
 
 namespace Robot {
+    /*  1         0
+     *  2         3
+    */
 
 
     void Bot::init() {
@@ -16,38 +19,49 @@ namespace Robot {
         Serial.println("Bot initialized");
     }
 
-    void Bot::linear_x(int v, boolean reverse) {
-        boolean direction = reverse != 1;
+    void Bot::read_joystick() {
+        Serial.println(ps2.readButton(PS2_JOYSTICK_RIGHT_X_AXIS));
+        Serial.println(ps2.readButton(PS2_JOYSTICK_RIGHT_Y_AXIS));
+    }
+
+    void Bot::rotate(int v, boolean reverse) {
         for (int i = 0; i < 4; i++) {
-            if (i % 2 == 1) {
-                digitalWrite(motors[i].motor, direction);
+            if (i % 2 == 0) {
+                digitalWrite(motors[i].motor, reverse);
                 analogWrite(motors[i].pwm, v);
             } else {
-                analogWrite(motors[i].pwm, 0);
+                digitalWrite(motors[i].motor, !reverse);
+                analogWrite(motors[i].pwm, v);
             }
         }
     }
 
     void Bot::linear_y(int v, boolean reverse) {
-        boolean direction = reverse != 1;
         for (int i = 0; i < 4; i++) {
-            if (i % 2 == 0) {
-                digitalWrite(motors[i].motor, direction);
+            if (i == 2 || i == 3) {
+                digitalWrite(motors[i].motor, !reverse);
                 analogWrite(motors[i].pwm, v);
             } else {
-                analogWrite(motors[i].pwm, 0);
+                digitalWrite(motors[i].motor, reverse);
+                analogWrite(motors[i].pwm, v);
             }
         }
     }
 
-    void Bot::rotate(boolean direction) {
+    void Bot::kill() {
+        for (auto &motor: motors) {
+            analogWrite(motor.pwm, 0);
+        }
+    }
+
+    void Bot::linear_x(int v, boolean reverse) {
         for (int i = 0; i < 4; i++) {
-            if (i > 0 && i < 3) {
-                digitalWrite(motors[i].motor, direction);
-                analogWrite(motors[i].pwm, SPEED);
+            if (i == 1 || i == 2) {
+                digitalWrite(motors[i].motor, reverse);
+                analogWrite(motors[i].pwm, v);
             } else {
-                digitalWrite(motors[i].motor, !direction);
-                analogWrite(motors[i].pwm, SPEED);
+                digitalWrite(motors[i].motor, !reverse);
+                analogWrite(motors[i].pwm, v);
             }
         }
     }
@@ -58,25 +72,29 @@ namespace Robot {
 
     void Bot::run() {
         Serial.println("Bot running");
-        Serial.println(ps2.readAllButton());
         if (!ps2.readButton(PS2_UP)) {
+            Serial.println("Forward");
             linear_y(SPEED, false);
         } else if (!ps2.readButton(PS2_DOWN)) {
+            Serial.println("Backward");
             linear_y(SPEED, true);
         } else if (!ps2.readButton(PS2_LEFT)) {
+            Serial.println("Left");
             linear_x(SPEED, false);
         } else if (!ps2.readButton(PS2_RIGHT)) {
+            Serial.println("Right");
             linear_x(SPEED, true);
         } else if (!ps2.readButton(PS2_LEFT_1)) {
-            rotate(true);
+            Serial.println("Rotate left");
+            rotate(SPEED, false);
         } else if (!ps2.readButton(PS2_RIGHT_1)) {
-            rotate(false);
+            Serial.println("Rotate right");
+            rotate(SPEED, true);
         } else if (!ps2.readButton(PS2_TRIANGLE)) {
+            Serial.println("Toggle LED");
             toggle_led();
         } else {
-            for (auto &motor: motors) {
-                analogWrite(motor.pwm, 0);
-            }
+            kill();
         }
     }
 

@@ -19,11 +19,15 @@ namespace Robot {
 
         void linear_y(int v, boolean reverse);
 
-        void rotate(boolean direction);
+        void rotate(int v, boolean reverse);
 
         void init();
 
         void run();
+
+        void read_joystick();
+
+        void kill();
 
         static void toggle_led();
 
