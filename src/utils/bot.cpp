@@ -13,6 +13,7 @@ namespace Robot {
         digitalWrite(LED, LOW);
         ps2.begin(115200);
         Serial.begin(9600);
+        Serial.println("Bot initialized");
     }
 
     void Bot::linear_x(int v, boolean reverse) {
@@ -56,6 +57,8 @@ namespace Robot {
     }
 
     void Bot::run() {
+        Serial.println("Bot running");
+        Serial.println(ps2.readAllButton());
         if (!ps2.readButton(PS2_UP)) {
             linear_y(SPEED, false);
         } else if (!ps2.readButton(PS2_DOWN)) {

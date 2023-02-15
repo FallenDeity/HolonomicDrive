@@ -34,7 +34,7 @@ namespace Robot {
                            {7,  6},
                            {8,  9},
                            {10, 11}};
-        Cytron_PS2Shield ps2 = Cytron_PS2Shield(2, 3);
+        Cytron_PS2Shield ps2;
     };
 }
 #endif //HOLONOMIC_BOT_H
