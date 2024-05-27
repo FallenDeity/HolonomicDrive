@@ -23,9 +23,6 @@ namespace XDrive {
         arr[1] = static_cast<int>(speed * cos(angle + M_PI / 4));
         arr[2] = static_cast<int>(speed * sin(angle + M_PI / 4));
         arr[3] = static_cast<int>(speed * cos(angle + M_PI / 4));
-        for (int i = 0; i < this->numMotors; i++) {
-            arr[i] = static_cast<int>(map(arr[i], -180, 180, -XDrive::XDrive::MAX_SPEED, XDrive::XDrive::MAX_SPEED));
-        }
         return arr;
     }
 
